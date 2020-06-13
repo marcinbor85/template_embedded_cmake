@@ -21,7 +21,6 @@ project(hello_world
 
 add_definitions(
     -DSTM32F40_41xxx
-    -DUSE_STDPERIPH_DRIVER
 )
 
 include_directories(PUBLIC
@@ -30,12 +29,16 @@ include_directories(PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/src
 )
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libstm32)
-
 add_executable(${PROJECT_NAME})
-file(GLOB PROJECT_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.c ${CMAKE_CURRENT_LIST_DIR}/src/*.s)
+file(GLOB PROJECT_SRC_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/src/*.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/*.s
+    ${CMAKE_CURRENT_LIST_DIR}/src/hw/*.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/system/*.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/utils/*.c
+)
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SRC_FILES})
-target_link_libraries(${PROJECT_NAME} ${LIBSTM32F4_NAME})
+target_link_libraries(${PROJECT_NAME})
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/post-build.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/utils.cmake)
