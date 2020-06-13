@@ -13,36 +13,27 @@ LIBDIR = lib
 
 DIRS = $(BUILDDIR) $(BINDIR) $(LIBDIR)
 
-LIBSTM32DIR = libstm32
-LIBSTM32 = stm32f4
-LIBSTM32PATH = $(LIBDIR)/lib$(LIBSTM32).a
-LIBSTM32SRCS = $(wildcard $(LIBSTM32DIR)/src/*.c)
-
 LIBMAINDIR = src
 LIBMAIN = main
 LIBMAINPATH = $(LIBDIR)/lib$(LIBMAIN).a
-LIBMAINSRCS = $(wildcard $(LIBMAINDIR)/*.c $(LIBMAINDIR)/*.s)
+LIBMAINSRCS = $(wildcard $(LIBMAINDIR)/*.c $(LIBMAINDIR)/*.s $(LIBMAINDIR)/hw/*.c $(LIBMAINDIR)/system/*.c $(LIBMAINDIR)/utils/*.c)
 
 CFLAGS  = -g -Wall -std=c99
 CFLAGS += -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
-CFLAGS += -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER
-CFLAGS += -I$(LIBMAINDIR) -I$(LIBSTM32DIR)/inc -Icmsis/core -Icmsis/device
+CFLAGS += -DSTM32F40_41xxx
+CFLAGS += -I$(LIBMAINDIR) -Icmsis/core -Icmsis/device
 
 LDFLAGS  = -Wl,--gc-sections,-Map,$(BUILDDIR)/$(PROJECT).map
 LDFLAGS += -g -Tstm32f4_flash.ld
-LDFLAGS += -L$(LIBDIR) -l$(LIBSTM32) -l$(LIBMAIN)
+LDFLAGS += -L$(LIBDIR) -l$(LIBMAIN)
 
 ARFLAGS = rcs
-
-LIBSTM32OBJS := $(LIBSTM32SRCS:.c=.o)
-LIBSTM32OBJS := $(LIBSTM32OBJS:.s=.o)
-LIBSTM32OBJS := $(addprefix $(BUILDDIR)/,$(LIBSTM32OBJS))
 
 LIBMAINOBJS := $(LIBMAINSRCS:.c=.o)
 LIBMAINOBJS := $(LIBMAINOBJS:.s=.o)
 LIBMAINOBJS := $(addprefix $(BUILDDIR)/,$(LIBMAINOBJS))
 
-OBJ_DIRS_TREE = $(dir $(LIBSTM32OBJS) $(LIBMAINOBJS))
+OBJ_DIRS_TREE = $(dir $(LIBMAINOBJS))
 
 TARGET = $(BINDIR)/$(PROJECT)
 
@@ -60,8 +51,7 @@ post-build: main-build
 main-build: pre-build
 	@make --no-print-directory target
 
-target: $(LIBSTM32PATH) \
-        $(LIBMAINPATH) \
+target: $(LIBMAINPATH) \
         $(TARGET).elf \
         $(TARGET).hex \
         $(TARGET).bin
@@ -74,13 +64,9 @@ target: $(LIBSTM32PATH) \
 	@echo "(BIN) $@"
 	@$(OBJCOPY) -O binary $^ $@
 
-$(TARGET).elf: $(LIBSTM32PATH) $(LIBMAINPATH)
+$(TARGET).elf: $(LIBMAINPATH)
 	@echo "(LD) $^"
 	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ 
-
-$(LIBSTM32PATH): $(LIBSTM32OBJS)
-	@echo "(AR) $^"
-	@$(AR) $(ARFLAGS) $@ $^
 
 $(LIBMAINPATH): $(LIBMAINOBJS)
 	@echo "(AR) $^"
