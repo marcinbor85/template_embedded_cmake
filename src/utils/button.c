@@ -9,7 +9,7 @@ void button_register(struct button *self, const struct button_descriptor *desc)
         self->last_tick = 0;
         self->desc = desc;
         self->state = BUTTON_STATE_RELEASED;
-        self->next = (buttons == NULL) ? NULL : buttons;
+        self->next = buttons;
         
         buttons = self;
 }
