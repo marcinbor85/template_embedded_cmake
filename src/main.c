@@ -81,6 +81,7 @@ static void event_callback(struct button *button, button_event event, int counte
         switch (event) {
         case BUTTON_EVENT_CLICK:
                 gpio_toggle_state(&led[2]);
+                pulse_trigger(&pulse, counter, 1000, 50, 200, pulse_cb);
                 break;
         case BUTTON_EVENT_PRESS:
                 pulse_cancel(&pulse);
