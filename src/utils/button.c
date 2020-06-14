@@ -72,7 +72,7 @@ bool button_is_pressed_debounced(struct button *self)
 
 static void call_event_callback(struct button *button, button_event event)
 {
-        if (button->desc->event_callback)
+        if (button->desc->event_callback != NULL)
                 button->desc->event_callback(button, event, button->counter);
 }
 

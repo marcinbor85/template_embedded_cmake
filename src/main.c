@@ -56,7 +56,7 @@ static const struct gpio user_button[] = {
         }
 };
 
-static void pulse_cb(struct pulse *pulse, bool state, int cycle_index)
+static void pulse_cb(struct pulse *pulse, bool state, int current_cycle)
 {
         gpio_set_state(&led[0], state);
 }

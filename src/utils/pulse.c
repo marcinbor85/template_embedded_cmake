@@ -30,8 +30,8 @@ static struct pulse *pulses = NULL;
 
 void pulse_register(struct pulse *self)
 {
-        self->total_num = 0;
-        self->current_num = 0;
+        self->total_cycles = 0;
+        self->current_cycle = 0;
         self->state = 0;
         self->last_tick = 0;
         self->high_duration = 0;
@@ -62,10 +62,13 @@ void pulse_unregister(struct pulse *self)
         }
 }
 
-void pulse_trigger(struct pulse *self, int pulses_num, uint32_t init_delay, uint32_t high_duration, uint32_t low_duration, pulse_callback cb)
+void pulse_trigger(struct pulse *self, int total_cycles, uint32_t init_delay, uint32_t high_duration, uint32_t low_duration, pulse_callback cb)
 {
-        self->total_num = pulses_num;
-        self->current_num = 0;
+        if (total_cycles <= 0)
+                return;
+
+        self->total_cycles = total_cycles;
+        self->current_cycle = 0;
         self->init_delay = init_delay;
         self->high_duration = high_duration;
         self->low_duration = low_duration;
@@ -76,31 +79,37 @@ void pulse_trigger(struct pulse *self, int pulses_num, uint32_t init_delay, uint
 
 void pulse_cancel(struct pulse *self)
 {
-        self->total_num = 0;
+        self->total_cycles = 0;
+}
+
+bool pulse_get_state(struct pulse *self)
+{
+        return self->state;
 }
 
 static void handle_pulse(struct pulse *pulse)
 {
         uint32_t duration;
         
-        if (pulse->total_num == 0)
+        if (pulse->total_cycles == 0)
                 return;
 
-        duration = (pulse->state == false) ? ((pulse->current_num == 0) ? pulse->init_delay : pulse->low_duration) : pulse->high_duration;
+        duration = (pulse->state == false) ? ((pulse->current_cycle == 0) ? pulse->init_delay : pulse->low_duration) : pulse->high_duration;
 
         if (pulse_port_get_current_tick() - pulse->last_tick < duration)
                 return;
 
         pulse->state = !pulse->state;
         pulse->last_tick = pulse_port_get_current_tick();
-        pulse->callback(pulse, pulse->state, pulse->current_num);
+        if (pulse->callback != NULL)
+                pulse->callback(pulse, pulse->state, pulse->current_cycle);
 
         if (pulse->state != false)
                 return;
 
-        pulse->current_num++;
-        if (pulse->current_num >= pulse->total_num)
-                pulse->total_num = 0;
+        pulse->current_cycle++;
+        if (pulse->current_cycle >= pulse->total_cycles)
+                pulse->total_cycles = 0;
 }
 
 void pulse_service(void)

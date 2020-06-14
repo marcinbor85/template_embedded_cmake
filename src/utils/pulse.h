@@ -34,7 +34,7 @@ extern "C" {
 
 struct pulse;
 
-typedef void (*pulse_callback)(struct pulse *self, bool state, int cycle_index);
+typedef void (*pulse_callback)(struct pulse *self, bool state, int current_cycle);
 
 struct pulse {
         pulse_callback callback;
@@ -43,8 +43,8 @@ struct pulse {
         uint32_t init_delay;
         uint32_t high_duration;
         uint32_t low_duration;
-        int total_num;
-        int current_num;
+        int total_cycles;
+        int current_cycle;
         bool state;
 
         struct pulse *next;
@@ -52,8 +52,9 @@ struct pulse {
 
 void pulse_register(struct pulse *self);
 void pulse_unregister(struct pulse *self);
-void pulse_trigger(struct pulse *self, int pulses_num, uint32_t init_delay, uint32_t high_duration, uint32_t low_duration, pulse_callback cb);
+void pulse_trigger(struct pulse *self, int total_cycles, uint32_t init_delay, uint32_t high_duration, uint32_t low_duration, pulse_callback cb);
 void pulse_cancel(struct pulse *self);
+bool pulse_get_state(struct pulse *self);
 
 void pulse_service(void);
 
