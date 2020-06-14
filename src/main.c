@@ -7,8 +7,8 @@
 #include "utils/timer.h"
 #include "utils/button.h"
 
-struct timer led_timer;
-struct timer led_timer2;
+struct timer led1_timer;
+struct timer led2_timer;
 
 struct button button;
 
@@ -85,9 +85,9 @@ static void event_callback(struct button *button, button_event event, int counte
                 break;
         case BUTTON_EVENT_LONG_HOLD:
                 if (counter == 0) {
-                        timer_stop(&led_timer);
+                        timer_stop(&led1_timer);
                 } else {
-                        timer_set_interval(&led_timer, 500, toggle_led);
+                        timer_set_interval(&led1_timer, 500, toggle_led);
                 }
                 break;
         }
@@ -104,8 +104,6 @@ static const struct button_descriptor button_desc = {
 
 int main(void)
 {
-        
-
         tick_init();
 
         gpio_init(&led[0]);
@@ -116,25 +114,23 @@ int main(void)
 
         button_register(&button, &button_desc);
 
-        timer_register(&led_timer);
-        timer_register(&led_timer2);
+        timer_register(&led1_timer);
+        timer_register(&led2_timer);
 
-        // 
-        timer_set_timeout(&led_timer2, 2000, enable_led);
+        timer_set_timeout(&led2_timer, 2000, enable_led);
 
         while (1) {
                 switch (button_get_state(&button)) {
                 case BUTTON_STATE_HOLD:
-                        timer_change_period(&led_timer, 200);
+                        timer_change_period(&led1_timer, 200);
                         break;
                 case BUTTON_STATE_LONG_HOLD:
-                        timer_change_period(&led_timer, 50);
+                        timer_change_period(&led1_timer, 50);
                         break;
                 default:
-                        timer_change_period(&led_timer, 500);
+                        timer_change_period(&led1_timer, 500);
                         break;
                 }
-                // gpio_set_state(&led[3], button_is_pressed_debounced(&button));
                 timer_service();
                 button_service();
         }
