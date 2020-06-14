@@ -78,22 +78,12 @@ static void call_event_callback(struct button *button, button_event event)
 
 static void debounce_button(struct button *button)
 {
-        if (button->is_pressed == false) {
-                if (button->desc->is_pressed(button) == false) {
-                        button->debounce_tick = button_port_get_current_tick();
-                } else if (button_port_get_current_tick() - button->debounce_tick >= button->desc->debounce_timeout) {
-                        button->debounce_tick = button_port_get_current_tick();
-                        button->is_pressed = true;
-                        call_event_callback(button, BUTTON_EVENT_PRESS);
-                }
-        } else {
-                if (button->desc->is_pressed(button) != false) {
-                        button->debounce_tick = button_port_get_current_tick();
-                } else if (button_port_get_current_tick() - button->debounce_tick >= button->desc->debounce_timeout) {
-                        button->debounce_tick = button_port_get_current_tick();
-                        button->is_pressed = false;
-                        call_event_callback(button, BUTTON_EVENT_RELEASE);
-                }
+        if (button->desc->is_pressed(button) == button->is_pressed) {
+                button->debounce_tick = button_port_get_current_tick();
+        } else if (button_port_get_current_tick() - button->debounce_tick >= button->desc->debounce_timeout) {
+                button->debounce_tick = button_port_get_current_tick();
+                button->is_pressed = !button->is_pressed;
+                call_event_callback(button, (button->is_pressed != false) ? BUTTON_EVENT_PRESS : BUTTON_EVENT_RELEASE);
         }
 }
 
