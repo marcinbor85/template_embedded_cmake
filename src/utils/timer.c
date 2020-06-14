@@ -9,8 +9,8 @@ void timer_register(struct timer *self)
         self->last_tick = 0;
         self->period = 0;
         self->callback = NULL;
-        self->next = timers;
 
+        self->next = timers;
         timers = self;
 }
 

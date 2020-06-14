@@ -6,11 +6,14 @@ static struct button *buttons = NULL;
 
 void button_register(struct button *self, const struct button_descriptor *desc)
 {
-        self->last_tick = 0;
+        self->debounce_tick = 0;
+        self->press_tick = 0;
+        self->counter = 0;
         self->desc = desc;
-        self->state = BUTTON_STATE_RELEASED;
+        self->is_pressed = false;
+        self->state = BUTTON_STATE_RELEASE;
+
         self->next = buttons;
-        
         buttons = self;
 }
 
@@ -38,62 +41,82 @@ button_state button_get_state(struct button *self)
         return self->state;
 }
 
+bool button_is_pressed_debounced(struct button *self)
+{
+        return self->is_pressed;
+}
+
+static void call_event_callback(struct button *button, button_event event)
+{
+        if (button->desc->event_callback)
+                button->desc->event_callback(button, event, button->counter);
+}
+
+static void debounce_button(struct button *button)
+{
+        if (button->is_pressed == false) {
+                if (button->desc->is_pressed(button) == false) {
+                        button->debounce_tick = button_port_get_current_tick();
+                } else if (button_port_get_current_tick() - button->debounce_tick >= button->desc->debounce_timeout) {
+                        button->debounce_tick = button_port_get_current_tick();
+                        button->is_pressed = true;
+                        call_event_callback(button, BUTTON_EVENT_PRESS);
+                }
+        } else {
+                if (button->desc->is_pressed(button) != false) {
+                        button->debounce_tick = button_port_get_current_tick();
+                } else if (button_port_get_current_tick() - button->debounce_tick >= button->desc->debounce_timeout) {
+                        button->debounce_tick = button_port_get_current_tick();
+                        button->is_pressed = false;
+                        call_event_callback(button, BUTTON_EVENT_RELEASE);
+                }
+        }
+}
+
 static void handle_button(struct button *button)
 {
+        debounce_button(button);
+
         switch (button->state) {
-        case BUTTON_STATE_RELEASED:
-                if (button->desc->is_pressed(button) == false) {
-                        button->last_tick = button_port_get_current_tick();
+        case BUTTON_STATE_RELEASE:
+                if (button->is_pressed == false) {
+                        if ((button->counter != 0) && (button_port_get_current_tick() - button->press_tick > button->desc->click_timeout))
+                                button->counter = 0;
                         break;
                 }
-                if (button_port_get_current_tick() - button->last_tick < button->desc->debounce_timeout)
-                        break;
-                button->state = BUTTON_STATE_SHORT_PRESSED;
-                button->last_tick = button_port_get_current_tick();
+                button->state = BUTTON_STATE_PRESS;
+                button->press_tick = button_port_get_current_tick();
                 break;
-        case BUTTON_STATE_SHORT_PRESSED:
-                if (button->desc->is_pressed(button) == false) {
-                        button->state = BUTTON_STATE_DEBOUNCE;
-                        button->last_tick = button_port_get_current_tick();
-                        if (button->desc->short_press_callback)
-                                button->desc->short_press_callback(button);
+        case BUTTON_STATE_PRESS:
+                if (button->is_pressed == false) {
+                        button->counter++;
+                        button->state = BUTTON_STATE_RELEASE;
+                        call_event_callback(button, BUTTON_EVENT_CLICK);
                         break;
                 }
-                if (button_port_get_current_tick() - button->last_tick < button->desc->long_timeout)
+                if (button_port_get_current_tick() - button->press_tick < button->desc->hold_timeout)
                         break;
-                button->state = BUTTON_STATE_LONG_PRESSED;
-                button->last_tick = button_port_get_current_tick();
-                if (button->desc->long_press_callback)
-                        button->desc->long_press_callback(button);
+                call_event_callback(button, BUTTON_EVENT_HOLD);
+                button->press_tick = button_port_get_current_tick();
+                button->state = BUTTON_STATE_HOLD;
                 break;
-        case BUTTON_STATE_LONG_PRESSED:
-                if (button->desc->is_pressed(button) == false) {
-                        button->state = BUTTON_STATE_DEBOUNCE;
-                        button->last_tick = button_port_get_current_tick();
+        case BUTTON_STATE_HOLD:
+                if (button->is_pressed == false) {
+                        button->state = BUTTON_STATE_RELEASE;
+                        button->counter = 0;
                         break;
                 }
-                if (button_port_get_current_tick() - button->last_tick < button->desc->very_long_timeout)
+                if (button_port_get_current_tick() - button->press_tick < button->desc->long_hold_timeout)
                         break;
-                button->state = BUTTON_STATE_VERY_LONG_PRESSED;
-                button->last_tick = button_port_get_current_tick();
-                if (button->desc->very_long_press_callback)
-                        button->desc->very_long_press_callback(button);
+                call_event_callback(button, BUTTON_EVENT_LONG_HOLD);
+                button->press_tick = button_port_get_current_tick();
+                button->state = BUTTON_STATE_LONG_HOLD;
                 break;
-        case BUTTON_STATE_VERY_LONG_PRESSED:
-                if (button->desc->is_pressed(button) != false)
-                        break;
-                button->state = BUTTON_STATE_DEBOUNCE;
-                button->last_tick = button_port_get_current_tick();
-                break;
-        case BUTTON_STATE_DEBOUNCE:
-                if (button->desc->is_pressed(button) != false) {
-                        button->last_tick = button_port_get_current_tick();
-                        break;
+        case BUTTON_STATE_LONG_HOLD:
+                if (button->is_pressed == false) {
+                        button->state = BUTTON_STATE_RELEASE;
+                        button->counter = 0;
                 }
-                if (button_port_get_current_tick() - button->last_tick < button->desc->debounce_timeout)
-                        break;
-                button->state = BUTTON_STATE_RELEASED;
-                button->last_tick = button_port_get_current_tick();
                 break;
         }
 }
