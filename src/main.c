@@ -6,11 +6,14 @@
 
 #include "utils/timer.h"
 #include "utils/button.h"
+#include "utils/pulse.h"
 
 struct timer led1_timer;
 struct timer led2_timer;
 
 struct button button;
+
+struct pulse pulse;
 
 static const struct gpio led[] = {
         {
@@ -53,6 +56,11 @@ static const struct gpio user_button[] = {
         }
 };
 
+static void pulse_cb(struct pulse *pulse, bool state, int cycle_index)
+{
+        gpio_set_state(&led[0], state);
+}
+
 static void toggle_led(struct timer *timer)
 {
         gpio_toggle_state(&led[0]);
@@ -75,13 +83,14 @@ static void event_callback(struct button *button, button_event event, int counte
                 gpio_toggle_state(&led[2]);
                 break;
         case BUTTON_EVENT_PRESS:
+                pulse_cancel(&pulse);
                 gpio_toggle_state(&led[3]);
                 break;
         case BUTTON_EVENT_RELEASE:
                 gpio_toggle_state(&led[1]);
                 break;
         case BUTTON_EVENT_HOLD:
-                gpio_toggle_state(&led[counter]);
+                pulse_trigger(&pulse, counter + 1, 0, 50, 200, pulse_cb);
                 break;
         case BUTTON_EVENT_LONG_HOLD:
                 if (counter == 0) {
@@ -114,6 +123,8 @@ int main(void)
 
         button_register(&button, &button_desc);
 
+        pulse_register(&pulse);
+
         timer_register(&led1_timer);
         timer_register(&led2_timer);
 
@@ -133,5 +144,6 @@ int main(void)
                 }
                 timer_service();
                 button_service();
+                pulse_service();
         }
 }
