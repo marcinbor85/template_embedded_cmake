@@ -1,8 +1,9 @@
-#include <stm32f4xx.h>
-
 #include "system/tick.h"
 
 #include "hw/gpio.h"
+
+#include "bsp/led.h"
+#include "bsp/button.h"
 
 #include "utils/timer.h"
 #include "utils/button.h"
@@ -14,47 +15,6 @@ struct timer led2_timer;
 struct button button;
 
 struct pulse pulse;
-
-static const struct gpio led[] = {
-        {
-                .reg = GPIOD,
-                .pin = 14,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 15,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 13,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 12,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-};
-
-static const struct gpio user_button[] = {
-        {
-                .reg = GPIOA,
-                .pin = 0,
-                .mode = GPIO_MODE_INPUT,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        }
-};
 
 static void pulse_cb(struct pulse *pulse, bool state, int current_cycle)
 {

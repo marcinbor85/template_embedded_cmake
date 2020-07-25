@@ -22,9 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "isr.h"
-
-#include "tick.h"
+#include "system/tick.h"
 
 #include <stm32f4xx.h>
 

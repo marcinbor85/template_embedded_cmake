@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "tick.h"
-#include "init.h"
+#include "system/tick.h"
+#include "system/init.h"
 
 #include <stm32f4xx.h>
 
