@@ -2,7 +2,7 @@ if(NOT DEFINED PORT)
     message(FATAL_ERROR "Error: PORT not defined")
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/src/port/${PORT}/toolchain-config.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/port/${PORT}/toolchain-config.cmake)
 
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
@@ -15,7 +15,7 @@ project(
 add_executable(${PROJECT_NAME})
 
 add_subdirectory(
-    ${PROJECT_SOURCE_DIR}/src/port/${PORT}/
+    ${PROJECT_SOURCE_DIR}/port/${PORT}/
 )
 
 target_include_directories(
