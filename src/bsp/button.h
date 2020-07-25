@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef PORT_BSP_BUTTON_H
-#define PORT_BSP_BUTTON_H
+#ifndef BSP_BUTTON_H
+#define BSP_BUTTON_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,4 +37,4 @@ extern const struct gpio user_button[];
 }
 #endif
 
-#endif /* PORT_BSP_BUTTON_H */
+#endif /* BSP_BUTTON_H */

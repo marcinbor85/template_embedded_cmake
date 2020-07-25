@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef INIT_H
-#define INIT_H
+#ifndef SYSTEM_INIT_H
+#define SYSTEM_INIT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ void init_system(void);
 }
 #endif
 
-#endif /* INIT_H */
+#endif /* SYSTEM_INIT_H */

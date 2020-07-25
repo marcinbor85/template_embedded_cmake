@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef UTILS_TIMER_H
+#define UTILS_TIMER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,4 +60,4 @@ extern uint32_t timer_port_get_current_tick(void);
 }
 #endif
 
-#endif /* TIMER_H */
+#endif /* UTILS_TIMER_H */

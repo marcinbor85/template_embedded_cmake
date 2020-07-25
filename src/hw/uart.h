@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef UART_H
-#define UART_H
+#ifndef HW_UART_H
+#define HW_UART_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,4 +53,4 @@ void uart_init(const struct gpio *self);
 }
 #endif
 
-#endif /* UART_H */
+#endif /* HW_UART_H */

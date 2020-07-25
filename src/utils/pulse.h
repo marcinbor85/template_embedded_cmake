@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef PULSE_H
-#define PULSE_H
+#ifndef UTILS_PULSE_H
+#define UTILS_PULSE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,4 +64,4 @@ extern uint32_t pulse_port_get_current_tick(void);
 }
 #endif
 
-#endif /* PULSE_H */
+#endif /* UTILS_PULSE_H */

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef GPIO_H
-#define GPIO_H
+#ifndef HW_GPIO_H
+#define HW_GPIO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,4 +77,4 @@ extern bool gpio_port_get_level(const struct gpio *self);
 }
 #endif
 
-#endif /* GPIO_H */
+#endif /* HW_GPIO_H */

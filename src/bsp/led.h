@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef PORT_BSP_LED_H
-#define PORT_BSP_LED_H
+#ifndef BSP_LED_H
+#define BSP_LED_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,4 +37,4 @@ extern const struct gpio led[];
 }
 #endif
 
-#endif /* PORT_BSP_LED_H */
+#endif /* BSP_LED_H */

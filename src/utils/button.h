@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef UTILS_BUTTON_H
+#define UTILS_BUTTON_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,4 +86,4 @@ extern uint32_t button_port_get_current_tick(void);
 }
 #endif
 
-#endif /* BUTTON_H */
+#endif /* UTILS_BUTTON_H */

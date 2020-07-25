@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef TICK_H
-#define TICK_H
+#ifndef SYSTEM_TICK_H
+#define SYSTEM_TICK_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ void tick_isr(void);
 }
 #endif
 
-#endif /* TICK_H */
+#endif /* SYSTEM_TICK_H */
