@@ -22,19 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef BSP_BUTTON_H
-#define BSP_BUTTON_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "user_button.h"
 
 #include "hw/gpio.h"
 
-extern const struct gpio user_button[];
+extern const struct gpio user_button_gpio;
 
-#ifdef __cplusplus
+void user_button_init(void)
+{
+        gpio_init(&user_button_gpio);
 }
-#endif
 
-#endif /* BSP_BUTTON_H */
+bool user_button_is_pressed(void)
+{
+        return gpio_get_state(&user_button_gpio);
+}

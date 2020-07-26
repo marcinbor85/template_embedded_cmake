@@ -24,7 +24,11 @@ SOFTWARE.
 
 #include "system/tick.h"
 
+#include "hw/uart.h"
+
 #include <stm32f4xx.h>
+
+extern struct uart user_uart;
 
 void NMI_Handler(void)
 {
@@ -65,4 +69,10 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
         tick_isr();
+}
+
+void USART1_IRQHandler(void)
+{
+        uart_port_rx_isr(&user_uart);
+        uart_port_tx_isr(&user_uart);
 }

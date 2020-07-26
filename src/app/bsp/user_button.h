@@ -22,37 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <stm32f4xx.h>
+#ifndef BSP_USER_BUTTON_H
+#define BSP_USER_BUTTON_H
 
-#include "hw/gpio.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-const struct gpio led[] = {
-        {
-                .reg = GPIOD,
-                .pin = 14,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 15,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 13,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-        {
-                .reg = GPIOD,
-                .pin = 12,
-                .mode = GPIO_MODE_OUTPUT_PUSH_PULL,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        },
-};
+#include <stdbool.h>
+
+void user_button_init(void);
+bool user_button_is_pressed(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* BSP_USER_BUTTON_H */

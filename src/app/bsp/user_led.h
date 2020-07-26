@@ -22,52 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef HW_UART_H
-#define HW_UART_H
+#ifndef BSP_USER_LED_H
+#define BSP_USER_LED_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stdbool.h>
 
-#include "utils/fifo.h"
+typedef enum {
+    USER_LED_ID_GREEN = 0,
+    USER_LED_ID_ORANGE,
+    USER_LED_ID_RED,
+    USER_LED_ID_BLUE
+} user_led_id;
 
-struct uart_descriptor {
-        void *reg;
-
-        uint32_t baudrate;
-
-        uint8_t *buf_rx;
-        uint32_t buf_rx_size;
-        uint8_t *buf_tx;
-        uint32_t buf_tx_size;
-};
-
-struct uart {
-        struct uart_descriptor const *desc;
-
-        struct fifo fifo_rx;
-        struct fifo fifo_tx;
-};
-
-void uart_init(struct uart *self, const struct uart_descriptor *desc);
-
-bool uart_read_byte(struct uart *self, uint8_t *byte);
-bool uart_write_byte(struct uart *self, uint8_t byte);
-
-extern void uart_port_init(struct uart *self);
-extern void uart_port_disable_rx_interrupt(struct uart *self);
-extern void uart_port_enable_rx_interrupt(struct uart *self);
-extern void uart_port_disable_tx_interrupt(struct uart *self);
-extern void uart_port_enable_tx_interrupt(struct uart *self);
-
-extern void uart_port_rx_isr(struct uart *self);
-extern void uart_port_tx_isr(struct uart *self);
+void user_led_init(void);
+void user_led_set(user_led_id led, bool state);
+void user_led_toggle(user_led_id led);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HW_UART_H */
+#endif /* BSP_USER_LED_H */

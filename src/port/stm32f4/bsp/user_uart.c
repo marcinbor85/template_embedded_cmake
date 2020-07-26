@@ -22,52 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef HW_UART_H
-#define HW_UART_H
+#include <stm32f4xx.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "hw/uart.h"
 
-#include <stdint.h>
-#include <stdbool.h>
+static uint8_t buf_rx[128];
+static uint8_t buf_tx[128];
 
-#include "utils/fifo.h"
+const struct uart_descriptor user_uart_descriptor = {
+        .reg = USART1,
+        .baudrate = 115200UL,
 
-struct uart_descriptor {
-        void *reg;
+        .buf_rx = buf_rx,
+        .buf_rx_size = sizeof(buf_rx),
 
-        uint32_t baudrate;
-
-        uint8_t *buf_rx;
-        uint32_t buf_rx_size;
-        uint8_t *buf_tx;
-        uint32_t buf_tx_size;
+        .buf_tx = buf_tx,
+        .buf_tx_size = sizeof(buf_tx),
 };
 
-struct uart {
-        struct uart_descriptor const *desc;
-
-        struct fifo fifo_rx;
-        struct fifo fifo_tx;
-};
-
-void uart_init(struct uart *self, const struct uart_descriptor *desc);
-
-bool uart_read_byte(struct uart *self, uint8_t *byte);
-bool uart_write_byte(struct uart *self, uint8_t byte);
-
-extern void uart_port_init(struct uart *self);
-extern void uart_port_disable_rx_interrupt(struct uart *self);
-extern void uart_port_enable_rx_interrupt(struct uart *self);
-extern void uart_port_disable_tx_interrupt(struct uart *self);
-extern void uart_port_enable_tx_interrupt(struct uart *self);
-
-extern void uart_port_rx_isr(struct uart *self);
-extern void uart_port_tx_isr(struct uart *self);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* HW_UART_H */
+struct uart user_uart;

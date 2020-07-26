@@ -22,52 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef HW_UART_H
-#define HW_UART_H
+#include "uart.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void uart_init(struct uart *self, const struct uart_descriptor *desc)
+{
+        self->desc = desc;
 
-#include <stdint.h>
-#include <stdbool.h>
+        fifo_init(&self->fifo_rx, self->desc->buf_rx, self->desc->buf_rx_size, 1);
+        fifo_init(&self->fifo_tx, self->desc->buf_tx, self->desc->buf_tx_size, 1);
 
-#include "utils/fifo.h"
-
-struct uart_descriptor {
-        void *reg;
-
-        uint32_t baudrate;
-
-        uint8_t *buf_rx;
-        uint32_t buf_rx_size;
-        uint8_t *buf_tx;
-        uint32_t buf_tx_size;
-};
-
-struct uart {
-        struct uart_descriptor const *desc;
-
-        struct fifo fifo_rx;
-        struct fifo fifo_tx;
-};
-
-void uart_init(struct uart *self, const struct uart_descriptor *desc);
-
-bool uart_read_byte(struct uart *self, uint8_t *byte);
-bool uart_write_byte(struct uart *self, uint8_t byte);
-
-extern void uart_port_init(struct uart *self);
-extern void uart_port_disable_rx_interrupt(struct uart *self);
-extern void uart_port_enable_rx_interrupt(struct uart *self);
-extern void uart_port_disable_tx_interrupt(struct uart *self);
-extern void uart_port_enable_tx_interrupt(struct uart *self);
-
-extern void uart_port_rx_isr(struct uart *self);
-extern void uart_port_tx_isr(struct uart *self);
-
-#ifdef __cplusplus
+        uart_port_init(self);
 }
-#endif
 
-#endif /* HW_UART_H */
+bool uart_read_byte(struct uart *self, uint8_t *byte)
+{
+        bool status;
+
+        uart_port_disable_rx_interrupt(self);
+        status = fifo_get(&self->fifo_rx, byte);
+        uart_port_enable_rx_interrupt(self);
+
+        return status;
+}
+
+bool uart_write_byte(struct uart *self, uint8_t byte)
+{
+        bool status;
+
+        uart_port_disable_tx_interrupt(self);
+        status = fifo_put(&self->fifo_tx, &byte, false);
+        uart_port_enable_tx_interrupt(self);
+
+        return status;
+}

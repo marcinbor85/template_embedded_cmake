@@ -22,19 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef BSP_LED_H
-#define BSP_LED_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stm32f4xx.h>
 
 #include "hw/gpio.h"
 
-extern const struct gpio led[];
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* BSP_LED_H */
+const struct gpio user_button_gpio = {
+        .reg = GPIOA,
+        .pin = 0,
+        .mode = GPIO_MODE_INPUT,
+        .speed = GPIO_SPEED_LOW,
+        .pupd = GPIO_PUPD_DISABLE
+};

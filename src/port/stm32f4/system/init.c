@@ -26,7 +26,8 @@ SOFTWARE.
 
 #include <stm32f4xx.h>
 
-uint32_t SystemCoreClock = 168000000;
+uint32_t SystemCoreClock = 168000000UL;
+uint32_t APB2Clock = 84000000UL;
 
 static void init_fpu(void)
 {

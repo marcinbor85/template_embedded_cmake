@@ -22,16 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <stm32f4xx.h>
+#ifndef APP_LOGIC_H
+#define APP_LOGIC_H
 
-#include "hw/gpio.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-const struct gpio user_button[] = {
-        {
-                .reg = GPIOA,
-                .pin = 0,
-                .mode = GPIO_MODE_INPUT,
-                .speed = GPIO_SPEED_LOW,
-                .pupd = GPIO_PUPD_DISABLE
-        }
-};
+void logic_init(void);
+void logic_service(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* APP_LOGIC_H */
