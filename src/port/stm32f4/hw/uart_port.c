@@ -115,9 +115,9 @@ void uart_port_tx_isr(struct uart *self)
         if ((usart->SR & USART_SR_TXE) != 0) {
                 if (fifo_get(&self->fifo_tx, &byte) == false) {
                         usart->CR1 &= ~USART_CR1_TXEIE;
+                        usart->SR &= ~USART_SR_TXE;
                 } else {
                         usart->DR = byte;
                 }
-                usart->SR &= ~USART_SR_TXE;
         }
 }
