@@ -5,7 +5,7 @@ add_subdirectory(
 )
 
 add_subdirectory(
-    ${CMAKE_CURRENT_LIST_DIR}/app/
+    ${CMAKE_CURRENT_LIST_DIR}/firmware/
 )
 
 target_link_libraries(${PROJECT_NAME})
