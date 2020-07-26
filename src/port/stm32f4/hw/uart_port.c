@@ -31,6 +31,25 @@ SOFTWARE.
 
 extern uint32_t APB2Clock;
 
+#define USART1_PIN_TX   6
+#define USART1_PIN_RX   7
+#define USART1_GPIO     GPIOB
+
+#define CONFIG_AFR(reg, pin, afr) reg->AFR[pin >> 3] = ((reg->AFR[pin >> 3] & (~(0x0F << ((pin & 0x07) << 2)))) | (afr << ((pin & 0x07) << 2)))
+#define CONFIG_FIELD(reg, field, pin, mode) reg->field = ((reg->field & (~(0x03 << (pin << 1)))) | (mode << (pin << 1)))
+
+static void config_uart_pins(GPIO_TypeDef *reg, uint8_t pin_rx, uint8_t pin_tx, uint8_t afr)
+{
+        CONFIG_AFR(reg, pin_tx, afr);
+        CONFIG_AFR(reg, pin_rx, afr);
+        CONFIG_FIELD(reg, MODER, pin_tx, 0x02);
+        CONFIG_FIELD(reg, MODER, pin_rx, 0x02);
+        CONFIG_FIELD(reg, OTYPER, pin_tx, 0x00);
+        CONFIG_FIELD(reg, OTYPER, pin_rx, 0x00);
+        CONFIG_FIELD(reg, PUPDR, pin_tx, 0x01);
+        CONFIG_FIELD(reg, PUPDR, pin_rx, 0x01);
+}
+
 void uart_port_init(struct uart *self)
 {
         USART_TypeDef *usart = self->desc->reg;
@@ -39,17 +58,7 @@ void uart_port_init(struct uart *self)
                 RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
                 RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 
-                GPIOB->AFR[0] = (GPIOB->AFR[0] & (~(0x0F << (6 << 2)))) | (0x07 << (6 << 2));   // PB6 Uart1Tx
-                GPIOB->AFR[0] = (GPIOB->AFR[0] & (~(0x0F << (7 << 2)))) | (0x07 << (7 << 2));   // PB7 Uart1Rx
-                
-                GPIOB->MODER = (GPIOB->MODER & (~(0x03 << (6 << 1)))) | (0x02 << (6 << 1));     
-                GPIOB->MODER = (GPIOB->MODER & (~(0x03 << (7 << 1)))) | (0x02 << (7 << 1));     
-
-                GPIOB->OTYPER = (GPIOB->OTYPER & (~(0x03 << (6 << 1)))) | (0x00 << (6 << 1));
-                GPIOB->OTYPER = (GPIOB->OTYPER & (~(0x03 << (7 << 1)))) | (0x00 << (7 << 1));
-
-                GPIOB->PUPDR = (GPIOB->PUPDR & (~(0x03 << (6 << 1)))) | (0x01 << (6 << 1));
-                GPIOB->PUPDR = (GPIOB->PUPDR & (~(0x03 << (7 << 1)))) | (0x01 << (7 << 1));
+                config_uart_pins(USART1_GPIO, USART1_PIN_TX, USART1_PIN_RX, 0x07);
 
                 NVIC_EnableIRQ(USART1_IRQn);
         } else {
