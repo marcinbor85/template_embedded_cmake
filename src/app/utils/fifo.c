@@ -18,11 +18,9 @@ bool fifo_put(struct fifo *self, void *item, bool force)
         bool overflow = false;
 
         if (self->count >= self->capacity) {
-                if (force == false) {
+                if (force == false)
                         return false;
-                } else {
-                        overflow = true;
-                }
+                overflow = true;
         }
 
         memcpy(&((uint8_t*)self->buf)[self->tail * self->item_size], (uint8_t*)item, self->item_size);
@@ -30,10 +28,9 @@ bool fifo_put(struct fifo *self, void *item, bool force)
         if (++self->tail >= self->capacity)
 		self->tail = 0;
 
-        if (overflow == false)
+        if (overflow == false) {
                 self->count++;
-
-        if (overflow != false) {
+        } else {
                 if (++self->head >= self->capacity)
 		        self->head = 0;
         }
