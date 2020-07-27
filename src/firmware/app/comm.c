@@ -27,34 +27,36 @@ SOFTWARE.
 #include "bsp/user_uart.h"
 #include "bsp/user_led.h"
 
-#include "utils/timer.h"
+#include "utils/slip.h"
 
-struct timer uart_timer;
+static struct slip slip;
 
-static void send_heartbeat(struct timer *timer)
-{
-        static uint8_t byte = 0;
-
-        user_uart_write_byte(byte++);
-        user_led_toggle(USER_LED_ID_ORANGE);
-}
+static uint8_t buf_rx[64];
+static uint8_t buf_tx[128];
 
 static void echo_service(void)
 {
         uint8_t byte;
+        uint32_t size_rx;
+        uint32_t size_tx;
 
         if (user_uart_read_byte(&byte) == false)
                 return;
 
-        user_uart_write_byte(byte);
+        if (slip_decode_frame(&slip, byte, buf_rx, sizeof(buf_rx), &size_rx) == false)
+                return;
+        
+        if (slip_encode_frame(buf_tx, sizeof(buf_tx), &size_tx, buf_rx, size_rx) == false)
+                return;
+
+        user_uart_write_buf(buf_tx, size_tx);
 }
 
 void comm_init(void)
 {
         user_uart_init();
-        
-        timer_register(&uart_timer);
-        timer_set_interval(&uart_timer, 1000, send_heartbeat);
+
+        slip_init(&slip);
 }
 
 void comm_service(void)
