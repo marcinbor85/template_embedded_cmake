@@ -55,3 +55,18 @@ bool uart_write_byte(struct uart *self, uint8_t byte)
 
         return status;
 }
+
+bool uart_write_buf(struct uart *self, uint8_t *buf, uint32_t size)
+{
+        bool status = false;
+
+        uart_port_disable_tx_interrupt(self);
+        while (size-- > 0) {
+                status = fifo_put(&self->fifo_tx, buf++, false);
+                if (status == false)
+                        break;
+        }
+        uart_port_enable_tx_interrupt(self);
+
+        return status;
+}

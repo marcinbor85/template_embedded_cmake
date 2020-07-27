@@ -56,6 +56,7 @@ void uart_init(struct uart *self, const struct uart_descriptor *desc);
 
 bool uart_read_byte(struct uart *self, uint8_t *byte);
 bool uart_write_byte(struct uart *self, uint8_t byte);
+bool uart_write_buf(struct uart *self, uint8_t *buf, uint32_t size);
 
 extern void uart_port_init(struct uart *self);
 extern void uart_port_disable_rx_interrupt(struct uart *self);

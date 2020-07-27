@@ -35,6 +35,7 @@ extern "C" {
 void user_uart_init(void);
 bool user_uart_read_byte(uint8_t *byte);
 bool user_uart_write_byte(uint8_t byte);
+bool user_uart_write_buf(uint8_t *buf, uint32_t size);
 
 #ifdef __cplusplus
 }

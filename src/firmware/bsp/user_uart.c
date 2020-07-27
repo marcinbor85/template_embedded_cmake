@@ -43,3 +43,8 @@ bool user_uart_write_byte(uint8_t byte)
 {
         return uart_write_byte(&user_uart, byte);
 }
+
+bool user_uart_write_buf(uint8_t *buf, uint32_t size)
+{
+        return uart_write_buf(&user_uart, buf, size);
+}
