@@ -29,6 +29,8 @@ SOFTWARE.
 
 #include <stm32f4xx.h>
 
+#define CONFIG_FIELD(reg, field, pin, val) reg->field = ((reg->field & (~(0x03 << (pin << 1)))) | (val << (pin << 1)))
+
 void gpio_port_enable_clock(const struct gpio *self)
 {
         GPIO_TypeDef *gpio = (self->reg);
@@ -40,30 +42,30 @@ void gpio_port_enable_clock(const struct gpio *self)
 void gpio_port_set_mode(const struct gpio *self)
 {
         GPIO_TypeDef *gpio = (self->reg);
-        gpio->MODER &= ~(0x03 << (self->pin << 1));
+        CONFIG_FIELD(gpio, MODER, self->pin, 0x00);
 
         if (self->mode == GPIO_MODE_INPUT)
                 return;
         
-        gpio->MODER |= (0x01 << (self->pin << 1));
+        CONFIG_FIELD(gpio, MODER, self->pin, 0x01);
 
         if (self->mode == GPIO_MODE_OUTPUT_PUSH_PULL) {
-                gpio->OTYPER &= ~(0x01 << self->pin);
+                gpio->OTYPER &= ~(1 << self->pin);
         } else {
-                gpio->OTYPER |= (0x01 << self->pin);
+                gpio->OTYPER |= (1 << self->pin);
         }
 }
 
 void gpio_port_set_pupd(const struct gpio *self)
 {
         GPIO_TypeDef *gpio = (self->reg);
-        gpio->PUPDR = (gpio->PUPDR & (~(0x03 << (self->pin << 1)))) | (self->pupd << (self->pin << 1));
+        CONFIG_FIELD(gpio, PUPDR, self->pin, self->pupd);
 }
 
 void gpio_port_set_speed(const struct gpio *self)
 {
         GPIO_TypeDef *gpio = (self->reg);
-        gpio->OSPEEDR = (gpio->OSPEEDR & (~(0x03 << (self->pin << 1)))) | (self->speed << (self->pin << 1));
+        CONFIG_FIELD(gpio, OSPEEDR, self->pin, self->speed);
 }
 
 void gpio_port_set_level(const struct gpio *self, bool state)

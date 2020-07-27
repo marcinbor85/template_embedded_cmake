@@ -36,7 +36,7 @@ extern uint32_t APB2Clock;
 #define USART1_GPIO     GPIOB
 
 #define CONFIG_AFR(reg, pin, afr) reg->AFR[pin >> 3] = ((reg->AFR[pin >> 3] & (~(0x0F << ((pin & 0x07) << 2)))) | (afr << ((pin & 0x07) << 2)))
-#define CONFIG_FIELD(reg, field, pin, mode) reg->field = ((reg->field & (~(0x03 << (pin << 1)))) | (mode << (pin << 1)))
+#define CONFIG_FIELD(reg, field, pin, val) reg->field = ((reg->field & (~(0x03 << (pin << 1)))) | (val << (pin << 1)))
 
 static void config_uart_pins(GPIO_TypeDef *reg, uint8_t pin_rx, uint8_t pin_tx, uint8_t afr)
 {
@@ -101,10 +101,11 @@ void uart_port_rx_isr(struct uart *self)
         uint8_t byte;
         USART_TypeDef *usart = self->desc->reg;
 
-        if ((usart->SR & USART_SR_RXNE) != 0) {
-                byte = usart->DR;
-                fifo_put(&self->fifo_rx, &byte, false);
-        }
+        if ((usart->SR & USART_SR_RXNE) == 0)
+                return;
+
+        byte = usart->DR;
+        fifo_put(&self->fifo_rx, &byte, false);
 }
 
 void uart_port_tx_isr(struct uart *self)
@@ -112,12 +113,13 @@ void uart_port_tx_isr(struct uart *self)
         uint8_t byte;
         USART_TypeDef *usart = self->desc->reg;
 
-        if ((usart->SR & USART_SR_TXE) != 0) {
-                if (fifo_get(&self->fifo_tx, &byte) == false) {
-                        usart->CR1 &= ~USART_CR1_TXEIE;
-                        usart->SR &= ~USART_SR_TXE;
-                } else {
-                        usart->DR = byte;
-                }
+        if ((usart->SR & USART_SR_TXE) == 0)
+                return;
+
+        if (fifo_get(&self->fifo_tx, &byte) == false) {
+                usart->CR1 &= ~USART_CR1_TXEIE;
+                usart->SR &= ~USART_SR_TXE;
+        } else {
+                usart->DR = byte;
         }
 }
