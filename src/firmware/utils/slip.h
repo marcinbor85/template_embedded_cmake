@@ -32,12 +32,12 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-#define SLIP_BYTE_START         0xC0
-#define SLIP_BYTE_END           0xC1
-#define SLIP_BYTE_ESCAPE        0xDB
-#define SLIP_BYTE_ESCAPE_START  0xDC
-#define SLIP_BYTE_ESCAPE_END    0xDD
-#define SLIP_BYTE_ESCAPE_ESCAPE 0xDE
+#define SLIP_BYTE_START         ':'
+#define SLIP_BYTE_END           '\n'
+#define SLIP_BYTE_ESCAPE        '\\'
+#define SLIP_BYTE_ESCAPE_START  ';'
+#define SLIP_BYTE_ESCAPE_END    'n'
+#define SLIP_BYTE_ESCAPE_ESCAPE '/'
 
 typedef enum {
         SLIP_STATE_START = 0,
