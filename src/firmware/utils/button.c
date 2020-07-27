@@ -94,8 +94,10 @@ static void handle_button(struct button *button)
         switch (button->state) {
         case BUTTON_STATE_RELEASE:
                 if (button->is_pressed == false) {
-                        if ((button->counter != 0) && (button_port_get_current_tick() - button->press_tick > button->desc->click_timeout))
+                        if ((button->counter != 0) && (button_port_get_current_tick() - button->press_tick > button->desc->click_timeout)) {
+                                call_event_callback(button, BUTTON_EVENT_CLICK);
                                 button->counter = 0;
+                        }
                         break;
                 }
                 button->state = BUTTON_STATE_PRESS;
@@ -105,7 +107,6 @@ static void handle_button(struct button *button)
                 if (button->is_pressed == false) {
                         button->counter++;
                         button->state = BUTTON_STATE_RELEASE;
-                        call_event_callback(button, BUTTON_EVENT_CLICK);
                         break;
                 }
                 if (button_port_get_current_tick() - button->press_tick < button->desc->hold_timeout)
