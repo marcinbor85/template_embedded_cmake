@@ -33,8 +33,6 @@ extern "C" {
 
 extern uint32_t SystemCoreClock;
 
-void init_system(void);
-
 #ifdef __cplusplus
 }
 #endif

@@ -100,7 +100,7 @@ LoopFillZerobss:
   bcc  FillZerobss
 
 /* Call the clock system intitialization function.*/
-  bl  init_system
+  bl  SystemInit
 /* Call the application's entry point.*/
   bl  main
   bx  lr    

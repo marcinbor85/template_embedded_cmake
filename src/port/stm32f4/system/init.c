@@ -74,7 +74,7 @@ static void init_isr(void)
         SCB->VTOR = FLASH_BASE;
 }
 
-void init_system(void)
+void SystemInit(void)
 {
         init_fpu();
         init_clock();
