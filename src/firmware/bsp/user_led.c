@@ -27,16 +27,10 @@ SOFTWARE.
 #include "hw/gpio.h"
 
 extern const struct gpio user_led_gpio_green;
-extern const struct gpio user_led_gpio_orange;
-extern const struct gpio user_led_gpio_red;
-extern const struct gpio user_led_gpio_blue;
 
 void user_led_init(void)
 {
         gpio_init(&user_led_gpio_green);
-        gpio_init(&user_led_gpio_orange);
-        gpio_init(&user_led_gpio_red);
-        gpio_init(&user_led_gpio_blue);
 }
 
 void user_led_set(user_led_id led, bool state)
@@ -44,15 +38,6 @@ void user_led_set(user_led_id led, bool state)
         switch (led) {
         case USER_LED_ID_GREEN:
                 gpio_set_state(&user_led_gpio_green, state);
-                break;
-        case USER_LED_ID_ORANGE:
-                gpio_set_state(&user_led_gpio_orange, state);
-                break;
-        case USER_LED_ID_RED:
-                gpio_set_state(&user_led_gpio_red, state);
-                break;
-        case USER_LED_ID_BLUE:
-                gpio_set_state(&user_led_gpio_blue, state);
                 break;
         }
 }
@@ -62,15 +47,6 @@ void user_led_toggle(user_led_id led)
         switch (led) {
         case USER_LED_ID_GREEN:
                 gpio_toggle_state(&user_led_gpio_green);
-                break;
-        case USER_LED_ID_ORANGE:
-                gpio_toggle_state(&user_led_gpio_orange);
-                break;
-        case USER_LED_ID_RED:
-                gpio_toggle_state(&user_led_gpio_red);
-                break;
-        case USER_LED_ID_BLUE:
-                gpio_toggle_state(&user_led_gpio_blue);
                 break;
         }
 }

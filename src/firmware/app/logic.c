@@ -31,6 +31,8 @@ SOFTWARE.
 #include "utils/button.h"
 #include "utils/timer.h"
 
+#include "bsp/user_uart.h"
+
 struct timer led_start_timer;
 struct timer led_blink_timer;
 
@@ -40,12 +42,13 @@ struct pulse pulse;
 
 static void pulse_cb(struct pulse *pulse, bool state, int current_cycle)
 {
-        user_led_set(USER_LED_ID_RED, state);
+        user_led_set(USER_LED_ID_GREEN, state);
 }
 
 static void toggle_led(struct timer *timer)
 {
-        user_led_toggle(USER_LED_ID_BLUE);
+        user_led_toggle(USER_LED_ID_GREEN);
+        user_uart_write_byte('?');
 }
 
 static bool is_button_pressed(struct button *button)
@@ -58,9 +61,11 @@ static void event_callback(struct button *button, button_event event, int counte
         switch (event) {
         case BUTTON_EVENT_CLICK:
                 if (counter == 1) {
-                        user_led_toggle(USER_LED_ID_GREEN);
+                        timer_set_interval(&led_blink_timer, 1000, toggle_led);
                 } else if (counter == 2) {
-                        user_led_toggle(USER_LED_ID_ORANGE);
+                        timer_set_interval(&led_blink_timer, 500, toggle_led);
+                } else if (counter == 3) {
+                        timer_set_interval(&led_blink_timer, 200, toggle_led);
                 }
                 break;
         case BUTTON_EVENT_PRESS:
@@ -68,15 +73,10 @@ static void event_callback(struct button *button, button_event event, int counte
         case BUTTON_EVENT_RELEASE:
                 break;
         case BUTTON_EVENT_HOLD:
+                timer_stop(&led_blink_timer);
                 pulse_trigger(&pulse, counter + 1, 0, 50, 200, pulse_cb);
                 break;
         case BUTTON_EVENT_LONG_HOLD:
-                if (counter == 0) {
-                        timer_stop(&led_blink_timer);
-                        user_led_set(USER_LED_ID_BLUE, true);
-                } else {
-                        timer_set_interval(&led_blink_timer, 500, toggle_led);
-                }
                 break;
         }
 }
@@ -98,23 +98,12 @@ void logic_init(void)
         button_register(&button, &button_desc);
         pulse_register(&pulse);
 
-        timer_register(&led_start_timer);
         timer_register(&led_blink_timer);
 
-        timer_set_timeout(&led_start_timer, 2000, toggle_led);
+        timer_set_interval(&led_blink_timer, 500, toggle_led);
 }
 
 void logic_service(void)
 {
-        switch (button_get_state(&button)) {
-        case BUTTON_STATE_HOLD:
-                timer_change_period(&led_blink_timer, 200);
-                break;
-        case BUTTON_STATE_LONG_HOLD:
-                timer_change_period(&led_blink_timer, 50);
-                break;
-        default:
-                timer_change_period(&led_blink_timer, 500);
-                break;
-        }
+        
 }

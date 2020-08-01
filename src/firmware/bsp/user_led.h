@@ -33,9 +33,6 @@ extern "C" {
 
 typedef enum {
     USER_LED_ID_GREEN = 0,
-    USER_LED_ID_ORANGE,
-    USER_LED_ID_RED,
-    USER_LED_ID_BLUE
 } user_led_id;
 
 void user_led_init(void);
