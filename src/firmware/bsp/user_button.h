@@ -31,8 +31,12 @@ extern "C" {
 
 #include <stdbool.h>
 
+typedef enum {
+    USER_BUTTON_ID_1 = 0,
+} user_button_id;
+
 void user_button_init(void);
-bool user_button_is_pressed(void);
+bool user_button_is_pressed(user_button_id button);
 
 #ifdef __cplusplus
 }

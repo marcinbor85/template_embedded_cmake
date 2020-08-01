@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include "hw/gpio.h"
 
-const struct gpio user_button_gpio = {
+const struct gpio user_button_gpio_1 = {
         .reg = GPIOC,
         .pin = 13,
         .mode = GPIO_MODE_INPUT,

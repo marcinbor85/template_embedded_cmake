@@ -53,7 +53,7 @@ static void toggle_led(struct timer *timer)
 
 static bool is_button_pressed(struct button *button)
 {
-        return user_button_is_pressed();
+        return user_button_is_pressed(USER_BUTTON_ID_1);
 }
 
 static void event_callback(struct button *button, button_event event, int counter)

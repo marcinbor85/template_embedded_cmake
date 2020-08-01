@@ -26,18 +26,28 @@ SOFTWARE.
 
 #include "hw/gpio.h"
 
-extern const struct gpio user_button_gpio;
+extern const struct gpio user_button_gpio_1;
 
 void user_button_init(void)
 {
-        gpio_init(&user_button_gpio);
+        gpio_init(&user_button_gpio_1);
 }
 
-bool user_button_is_pressed(void)
+bool user_button_is_pressed(user_button_id button)
 {
+        bool state;
+
+        switch (button) {
+        case USER_BUTTON_ID_1:
+                state = gpio_get_state(&user_button_gpio_1);
+                break;
+        default:
+                return false;
+        }
+
 #ifdef REVERSE_USER_BUTTON
-        return !gpio_get_state(&user_button_gpio);
+        return !state;
 #else
-        return gpio_get_state(&user_button_gpio);
+        return state;
 #endif
 }
