@@ -26,3 +26,5 @@ target_sources(
     PRIVATE
     ${PORT_SRC_FILES}
 )
+
+include(${CMAKE_SOURCE_DIR}/cmake-utils/arm-utils.cmake)
