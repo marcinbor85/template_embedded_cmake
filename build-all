@@ -1,0 +1,19 @@
+#!/bin/bash
+
+PORTS_ARRAY=(stm32f0 stm32f4 atmega328p)
+
+MAIN_DIR=`pwd`
+
+mkdir ${MAIN_DIR}/build
+mkdir ${MAIN_DIR}/build/tests
+mkdir ${MAIN_DIR}/build/src
+
+cd ${MAIN_DIR}/build/tests && cmake ../.. -DTESTS=1 && make && make test
+
+for PORT in "${PORTS_ARRAY[@]}";
+do
+    mkdir ${MAIN_DIR}/build/src/${PORT}
+    cd ${MAIN_DIR}/build/src/${PORT} && cmake ../../.. -DPORT=${PORT} && make
+done
+
+cd ${MAIN_DIR}
